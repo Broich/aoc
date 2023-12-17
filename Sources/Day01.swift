@@ -53,41 +53,30 @@ struct Day01: AdventDay {
 
     // Replace this with your solution for the second part of the day's challenge.
     func part2() -> Any {
+        return entities.map { word in
+            let firstNumber = find(in: word, reversed: false)
+            let secondNumber = find(in: String(word.reversed()), reversed: true)
+            return Self.formDigits(for: [firstNumber, secondNumber])
 
-
-
-        var total = 0
-
-        for word in entities {
-            let firstNumber = find(in: word)
-            print("Got first number: \(firstNumber)")
-        }
-
-        return total
+        }.reduce(0, +)
     }
 
-    private func find(in string: String) -> Int {
-        print("-------")
-        print("Incoming word: \(string)")
+    static func formDigits(for digits: [Int]) -> Int {
+        digits.first! * 10 + digits.last!
+    }
 
+    private func find(in string: String, reversed: Bool) -> Int {
         for (index, char) in string.enumerated() {
-
-            print("char: \(char)")
             if char.isWholeNumber {
                 return Int(String(char))!
             } else {
-                let candidates = getCandidates(for: char)
-                print("Found \(candidates.count) candidates")
+                let candidates = getCandidates(for: char, reversed: reversed)
                 if !candidates.isEmpty {
-                    // first = wo, second = hree
                     for candidate in candidates {
-                        let possibleMatch = getCandidateSubstring(with: string, candidate: candidate, offset: index)
-                        print("possible match: \(possibleMatch)")
-                        if possibleMatch == candidate {
-                            // get number and break
-                            return getNumber(for: possibleMatch)
-                        } else {
-                            continue
+                        if let possibleMatch = getCandidateSubstring(with: string, candidate: candidate, offset: index) {
+                            if possibleMatch == candidate {
+                                return getNumber(for: possibleMatch)
+                            }
                         }
                     }
                 } else {
@@ -98,98 +87,48 @@ struct Day01: AdventDay {
         return 0
     }
 
-
-//    func findReversed(in string: String) -> Int {
-//
-//        var secondNumber: Int?
-//
-//        print("Reversed word: \(string)")
-//
-//        for (index, char) in string.enumerated() {
-//            print("char: \(char)")
-//            if char.isWholeNumber {
-//                secondNumber = Int(String(char))
-//                return secondNumber!
-//            } else {
-//                let candidates = getCandidatesReversed(for: char)
-//                print("Found \(candidates.count) candidates")
-//                if !candidates.isEmpty {
-//                    // first = wo, second = hree
-//                    for candidate in candidates {
-//                        let possibleMatch = getCandidateSubstring(with: string, candidate: candidate, offset: index)
-//                        print("possible match: \(possibleMatch)")
-//                        if possibleMatch == candidate {
-//                            // get number and break
-//                            secondNumber = getNumberReversed(for: String(possibleMatch.reversed()))
-//                            return secondNumber!
-//                        } else {
-//                            continue
-//                        }
-//                    }
-//                } else {
-//                    continue
-//                }
-//            }
-//        }
-//        return 0
-//    }
-
-
-    private func getCandidates(for char: Character) -> [String] {
-        switch char {
-        case "o": return ["one"]
-        case "t": return ["two", "three"]
-        case "f": return ["four", "five"]
-        case "s": return ["six", "seven"]
-        case "e": return ["eight"]
-        case "n": return ["nine"]
-        default: return []
-        }
-    }
-
-    private func getCandidatesReversed(for char: Character) -> [String] {
-        switch char {
-        case "e": return ["eno", "eerht", "evif", "enin"]
-        case "o": return ["owt"]
-        case "r": return ["ruof"]
-        case "x": return ["xis"]
-        case "n": return ["neves"]
-        case "t": return ["thgie"]
-        default: return []
+    private func getCandidates(for char: Character, reversed: Bool) -> [String] {
+        if reversed {
+            switch char {
+            case "e": return ["eno", "eerht", "evif", "enin"]
+            case "o": return ["owt"]
+            case "r": return ["ruof"]
+            case "x": return ["xis"]
+            case "n": return ["neves"]
+            case "t": return ["thgie"]
+            default: return []
+            }
+        } else {
+            switch char {
+            case "o": return ["one"]
+            case "t": return ["two", "three"]
+            case "f": return ["four", "five"]
+            case "s": return ["six", "seven"]
+            case "e": return ["eight"]
+            case "n": return ["nine"]
+            default: return []
+            }
         }
     }
 
     private func getNumber(for string: String) -> Int {
         switch string {
-        case "one": return 1
-        case "two": return 2
-        case "three": return 3
-        case "four": return 4
-        case "five": return 5
-        case "six": return 6
-        case "seven": return 7
-        case "eight": return 8
-        case "nine": return 9
+        case "one", "eno": return 1
+        case "two", "owt": return 2
+        case "three", "eerht": return 3
+        case "four", "ruof": return 4
+        case "five", "evif": return 5
+        case "six", "xis": return 6
+        case "seven", "neves": return 7
+        case "eight", "thgie": return 8
+        case "nine", "enin": return 9
         default: fatalError("No number found")
         }
     }
 
-    private func getNumberReversed(for string: String) -> Int {
-        switch string {
-        case "one": return 1
-        case "two": return 2
-        case "three": return 3
-        case "four": return 4
-        case "five": return 5
-        case "six": return 6
-        case "seven": return 7
-        case "eight": return 8
-        case "nine": return 9
-        default: fatalError("No number found")
-        }
-    }
+    private func getCandidateSubstring(with string: String, candidate: String, offset: Int) -> String? {
+        guard offset + candidate.count <= string.count else { return nil }
 
-    private func getCandidateSubstring(with string: String, candidate: String, offset: Int) -> String {
         let startIndex = string.index(string.startIndex, offsetBy: offset)
         let endIndex = string.index(string.startIndex, offsetBy: offset + candidate.count)
 
