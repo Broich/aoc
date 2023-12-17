@@ -59,38 +59,14 @@ struct Day01: AdventDay {
         var total = 0
 
         for word in entities {
-            let finalWord = find(in: word)
-            //            let replacedWord = find(in: word)
-            //            var firstDigit: String?
-            //            var secondDigit: String?
-            //            for char in replacedWord {
-            //                if char.isNumber {
-            //                    if firstDigit == nil {
-            //                        firstDigit = String(char)
-            //                    } else {
-            //                        secondDigit = String(char)
-            //                    }
-            //                }
-            //            }
-            //            if secondDigit == nil {
-            //                secondDigit = firstDigit
-            //            }
-            //
-            //            guard let first = firstDigit, let second = secondDigit else { return 0 }
-            //
-            //            if let combinedDigits = Int(first.appending(second)) {
-            //                print("Combined Digits: \(combinedDigits)")
-            //                total += combinedDigits
-            //            }
+            let firstNumber = find(in: word)
+            print("Got first number: \(firstNumber)")
         }
 
         return total
     }
 
-    private func find(in string: String) -> String {
-        var finalWord = ""
-        var firstNumber: Int?
-        var secondNumber: Int?
+    private func find(in string: String) -> Int {
         print("-------")
         print("Incoming word: \(string)")
 
@@ -98,8 +74,7 @@ struct Day01: AdventDay {
 
             print("char: \(char)")
             if char.isWholeNumber {
-                firstNumber = Int(String(char))
-                break
+                return Int(String(char))!
             } else {
                 let candidates = getCandidates(for: char)
                 print("Found \(candidates.count) candidates")
@@ -110,53 +85,7 @@ struct Day01: AdventDay {
                         print("possible match: \(possibleMatch)")
                         if possibleMatch == candidate {
                             // get number and break
-                            firstNumber = getNumber(for: possibleMatch)
-                            break
-                        } else {
-                            continue
-                        }
-                    }
-                    if firstNumber != nil {
-                        break
-                    }
-                } else {
-                    continue
-                }
-            }
-        }
-
-
-        print("Found first number: \(firstNumber.debugDescription)")
-        secondNumber = findReversed(in: String(string.reversed()))
-
-        print("Final word: \(finalWord)")
-        return finalWord
-    }
-
-
-    func findReversed(in string: String) -> Int {
-
-        var secondNumber: Int?
-
-        print("Reversed word: \(string)")
-
-        for (index, char) in string.enumerated() {
-            print("char: \(char)")
-            if char.isWholeNumber {
-                secondNumber = Int(String(char))
-                return secondNumber!
-            } else {
-                let candidates = getCandidatesReversed(for: char)
-                print("Found \(candidates.count) candidates")
-                if !candidates.isEmpty {
-                    // first = wo, second = hree
-                    for candidate in candidates {
-                        let possibleMatch = getCandidateSubstring(with: string, candidate: candidate, offset: index)
-                        print("possible match: \(possibleMatch)")
-                        if possibleMatch == candidate {
-                            // get number and break
-                            secondNumber = getNumberReversed(for: String(possibleMatch.reversed()))
-                            return secondNumber!
+                            return getNumber(for: possibleMatch)
                         } else {
                             continue
                         }
@@ -168,6 +97,42 @@ struct Day01: AdventDay {
         }
         return 0
     }
+
+
+//    func findReversed(in string: String) -> Int {
+//
+//        var secondNumber: Int?
+//
+//        print("Reversed word: \(string)")
+//
+//        for (index, char) in string.enumerated() {
+//            print("char: \(char)")
+//            if char.isWholeNumber {
+//                secondNumber = Int(String(char))
+//                return secondNumber!
+//            } else {
+//                let candidates = getCandidatesReversed(for: char)
+//                print("Found \(candidates.count) candidates")
+//                if !candidates.isEmpty {
+//                    // first = wo, second = hree
+//                    for candidate in candidates {
+//                        let possibleMatch = getCandidateSubstring(with: string, candidate: candidate, offset: index)
+//                        print("possible match: \(possibleMatch)")
+//                        if possibleMatch == candidate {
+//                            // get number and break
+//                            secondNumber = getNumberReversed(for: String(possibleMatch.reversed()))
+//                            return secondNumber!
+//                        } else {
+//                            continue
+//                        }
+//                    }
+//                } else {
+//                    continue
+//                }
+//            }
+//        }
+//        return 0
+//    }
 
 
     private func getCandidates(for char: Character) -> [String] {
