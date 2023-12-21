@@ -4,7 +4,7 @@ import XCTest
 
 // Make a copy of this file for every day to ensure the provided smoke tests
 // pass.
-final class Day03Tests: XCTestCase {
+final class Day02Tests: XCTestCase {
   // Smoke test data provided in the challenge question
   let testData = """
     1000
