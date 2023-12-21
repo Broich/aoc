@@ -56,9 +56,46 @@ struct Day02: AdventDay {
     }
 
     // Replace this with your solution for the second part of the day's challenge.
-//    func part2() -> Any {
-//        return ""
-//    }
+    func part2() -> Any {
+        var gameIdSum = 0
+
+        for entity in entities {
+            var highestRed: Int = 0
+            var highestBlue: Int = 0
+            var highestGreen: Int = 0
+
+            let components = entity.components(separatedBy: ":")
+
+            let sets = components.last!.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespaces) }
+            for gamseSet in sets {
+                // 3 blue, 4 red
+                let cubes = gamseSet.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces)}
+                for cubeValues in cubes {
+                    let cubeValue = cubeValues.components(separatedBy: " ")
+                    switch cubeValue.last {
+                    case "blue":
+                        if let blueVal = Int(cubeValue.first!), blueVal > highestBlue {
+                            highestBlue = blueVal
+                            break
+                        }
+                    case "red":
+                        if let redValue = Int(cubeValue.first!), redValue > highestRed {
+                            highestRed = redValue
+                            break
+                        }
+                    case "green":
+                        if let greenValue = Int(cubeValue.first!), greenValue > highestGreen {
+                            highestGreen = greenValue
+                            break
+                        }
+                    default: break
+                    }
+                }
+            }
+            gameIdSum += highestRed * highestGreen * highestBlue
+        }
+        return gameIdSum
+    }
 }
 
 
